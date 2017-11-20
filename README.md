@@ -6,4 +6,5 @@
 * 修复了Dubbo hessian下面无法RpcContext传递数据的问题
 * 增加了基于Dubbo的调用链日志
 * 增加了Dubbo mock系统的配置信息
+* 增加了Hystrix功能，但目前还没有界面显示，正在开发中
 * 增加了基于Dubbo的Spring boot starter
