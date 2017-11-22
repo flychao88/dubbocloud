@@ -184,9 +184,7 @@ public class MockTestFilter implements Filter {
 //    	log.info("MockTestFilte.globalDataTranster - start");
         if (inv instanceof RpcInvocation) {
 
-            Map<String, String> globalMap = CallChainContext.getContext().get();
-
-            initCallChainDataMap(globalMap);
+            Map<String, String> globalMap = initCallChainDataMap();
 
             String traceIdValue = globalMap.get(CallChainContext.TRACEID);
             String spanIdValue = globalMap.get(CallChainContext.SPANID);
@@ -224,9 +222,10 @@ public class MockTestFilter implements Filter {
     /**
      * 初始化全局map
      * 如果没有值,则是第一次使用,初始化tradeId和spanId
-     * @param globalMap
      */
-    public void initCallChainDataMap(Map<String, String> globalMap) {
+    public Map<String, String> initCallChainDataMap() {
+        Map<String, String> globalMap = CallChainContext.getContext().get();
+
         if (null == globalMap) {
             globalMap = new ConcurrentHashMap<String, String>();
             CallChainContext.getContext().add(globalMap);
@@ -250,6 +249,7 @@ public class MockTestFilter implements Filter {
 
             }
         }
+        return globalMap;
     }
 
 
