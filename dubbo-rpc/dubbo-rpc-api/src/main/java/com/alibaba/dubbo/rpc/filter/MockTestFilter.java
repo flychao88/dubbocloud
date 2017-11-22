@@ -53,6 +53,7 @@ public class MockTestFilter implements Filter {
     private final static String METHOD_NAME = "methodName";
     private final static String IP = "ip";
 
+    @Override
     public Result invoke(Invoker<?> invoker, Invocation inv) throws RpcException {
 //        log.info("[print current methodName:" + inv.getMethodName() + " gloab transmit parameter:" + inv.getAttachments() + " interface name:" + inv.getInvoker().getInterface());
 
@@ -94,14 +95,11 @@ public class MockTestFilter implements Filter {
 
             //获取mock数据
             String mockData = getMockSystemData(mockUrl, facadeName, applicationName, methodName);
-//            log.info("MockTestFilte.invokeMockEnv - mockData: " + mockData + delayTime(start));
 
             //如果得到的mock数据为空，则放行，不进行Mock操作
             if (StringUtils.isEmpty(mockData)) {
                 return invoker.invoke(inv);
             }
-            
-//            log.info("MockTestFilte.invokeMockEnv - getmockover - data: " + mockData + delayTime(start));
 
             //解析mock数据
             MockTestConfig mockTestConfig = parseMockData(mockData, MockTestConfig.class);
@@ -122,8 +120,6 @@ public class MockTestFilter implements Filter {
             log.warn("dubbo环境配置有问题，请检查application的env设置！env:" + env);
         }
         
-//        log.info("MockTestFilte.invokeMockEnv - result - " + (result == null ? "result is null": result.getValue()) + delayTime(start));
-
         return result;
     }
 
