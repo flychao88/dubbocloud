@@ -10,7 +10,7 @@
 
 #### 二、维护发起目的
 
-有这个想法的前提其实还是基于我们公司目前采用的是Spring boot+Dubbo的方式,Dubbo在Spring Cloud中只是扮演了服务治理的角色,而Spring Cloud本身包括了很多功能组件可供使用,于是将Spring Cloud的好用的功能组件移值到Dubbo中变成Dubbo Cloud的想法就产生了。
+有这个想法的前提其实还是基于我们公司目前采用的是Spring boot+Dubbo的方式,Dubbo在Spring Cloud中只是扮演了服务治理的角色,而Spring Cloud本身包括了很多功能组件可供使用,于是将Spring Cloud的好用的功能组件移值到Dubbo中,将Dubbo演变成Dubbo Cloud的想法就产生了。
 
 
 #### 三、主要维护者
