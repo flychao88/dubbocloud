@@ -153,7 +153,7 @@
 			<!-- Common libs -->
 			<dependency>
 				<groupId>org.springframework</groupId>
-				<artHifactId>spring-framework-bom</artHifactId>
+				<artifactId>spring-framework-bom</artifactId>
 				<version>${spring.bom.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
