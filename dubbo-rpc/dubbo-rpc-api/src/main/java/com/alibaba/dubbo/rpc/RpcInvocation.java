@@ -23,6 +23,7 @@ import java.util.Map;
 
 import com.alibaba.dubbo.common.Constants;
 import com.alibaba.dubbo.common.URL;
+import com.alibaba.dubbo.rpc.annotation.EnableBreaker;
 
 /**
  * RPC Invocation.
@@ -44,13 +45,15 @@ public class RpcInvocation implements Invocation, Serializable {
 
     private transient Invoker<?> invoker;
 
+    private Boolean enableBreaker;
+
     public RpcInvocation() {
     }
 
     public RpcInvocation(Invocation invocation, Invoker<?> invoker) {
         this(invocation.getMethodName(), invocation.getParameterTypes(), 
                 invocation.getArguments(), new HashMap<String, String>(invocation.getAttachments()),
-                invocation.getInvoker());
+                invocation.getInvoker(),invocation.getInvoker().getUrl().getParameter(Constants.METHOD_HYSTRIX_KEY,Boolean.FALSE));
         if (invoker != null) {
             URL url = invoker.getUrl();
             setAttachment(Constants.PATH_KEY, url.getPath());
@@ -72,36 +75,41 @@ public class RpcInvocation implements Invocation, Serializable {
             if (url.hasParameter(Constants.APPLICATION_KEY)) {
                 setAttachment(Constants.APPLICATION_KEY, url.getParameter(Constants.APPLICATION_KEY));
             }
+            if (url.hasParameter(Constants.METHOD_HYSTRIX_KEY)) {
+                setAttachment(Constants.METHOD_HYSTRIX_KEY, url.getParameter(Constants.METHOD_HYSTRIX_KEY));
+            }
         }
     }
 
     public RpcInvocation(Invocation invocation) {
         this(invocation.getMethodName(), invocation.getParameterTypes(), 
-                invocation.getArguments(), invocation.getAttachments(), invocation.getInvoker());
+                invocation.getArguments(), invocation.getAttachments(), invocation.getInvoker()
+                ,invocation.getInvoker().getUrl().getParameter(Constants.METHOD_HYSTRIX_KEY,Boolean.FALSE));
     }
 
     public RpcInvocation(Method method, Object[] arguments) {
-        this(method.getName(), method.getParameterTypes(), arguments, null, null);
+        this(method.getName(), method.getParameterTypes(), arguments, null, null,method.isAnnotationPresent(EnableBreaker.class));
     }
 
     public RpcInvocation(Method method, Object[] arguments, Map<String, String> attachment) {
-        this(method.getName(), method.getParameterTypes(), arguments, attachment, null);
+        this(method.getName(), method.getParameterTypes(), arguments, attachment, null,method.isAnnotationPresent(EnableBreaker.class));
     }
 
     public RpcInvocation(String methodName, Class<?>[] parameterTypes, Object[] arguments) {
-        this(methodName, parameterTypes, arguments, null, null);
+        this(methodName, parameterTypes, arguments, null, null,Boolean.FALSE);
     }
 
     public RpcInvocation(String methodName, Class<?>[] parameterTypes, Object[] arguments, Map<String, String> attachments) {
-        this(methodName, parameterTypes, arguments, attachments, null);
+        this(methodName, parameterTypes, arguments, attachments, null,Boolean.FALSE);
     }
 
-    public RpcInvocation(String methodName, Class<?>[] parameterTypes, Object[] arguments, Map<String, String> attachments, Invoker<?> invoker) {
+    public RpcInvocation(String methodName, Class<?>[] parameterTypes, Object[] arguments, Map<String, String> attachments, Invoker<?> invoker,Boolean enableBreaker) {
         this.methodName = methodName;
         this.parameterTypes = parameterTypes == null ? new Class<?>[0] : parameterTypes;
         this.arguments = arguments == null ? new Object[0] : arguments;
         this.attachments = attachments == null ? new HashMap<String, String>() : attachments;
         this.invoker = invoker;
+        this.enableBreaker = enableBreaker;
     }
     
     public Invoker<?> getInvoker() {
@@ -196,6 +204,13 @@ public class RpcInvocation implements Invocation, Serializable {
         }
         return value;
     }
+
+    @Override
+    public Boolean getEnableBreaker() {
+        return enableBreaker;
+    }
+
+
 
     @Override
     public String toString() {

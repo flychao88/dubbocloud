@@ -56,6 +56,11 @@ public class MockInvocation implements Invocation {
         return null;
     }
 
+    @Override
+    public Boolean getEnableBreaker() {
+        return Boolean.FALSE;
+    }
+
     public String getAttachment(String key) {
         return getAttachments().get(key);
     }
