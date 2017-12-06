@@ -466,20 +466,25 @@ public abstract class AbstractConfig implements Serializable {
             for (Method method : methods) {
                 try {
                     String name = method.getName();
-                    if ((name.startsWith("get") || name.startsWith("is")) 
+                    if ((name.startsWith("get") || name.startsWith("is"))
                             && ! "getClass".equals(name) && ! "get".equals(name) && ! "is".equals(name)
-                            && Modifier.isPublic(method.getModifiers()) 
+                            && Modifier.isPublic(method.getModifiers())
                             && method.getParameterTypes().length == 0
                             && isPrimitive(method.getReturnType())) {
+
                         int i = name.startsWith("get") ? 3 : 2;
                         String key = name.substring(i, i + 1).toLowerCase() + name.substring(i + 1);
-                        Object value = method.invoke(this, new Object[0]);
-                        if (value != null) {
-                            buf.append(" ");
-                            buf.append(key);
-                            buf.append("=\"");
-                            buf.append(value);
-                            buf.append("\"");
+                        try {
+                            Object value = method.invoke(this, new Object[0]);
+                            if (value != null) {
+                                buf.append(" ");
+                                buf.append(key);
+                                buf.append("=\"");
+                                buf.append(value);
+                                buf.append("\"");
+                            }
+                        }catch (Exception e){
+                            logger.error( "method tostring Exception:" +name,e );
                         }
                     }
                 } catch (Exception e) {

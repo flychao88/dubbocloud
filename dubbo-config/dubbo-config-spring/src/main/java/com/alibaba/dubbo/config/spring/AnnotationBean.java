@@ -243,6 +243,7 @@ public class AnnotationBean extends AbstractConfig implements DisposableBean, Be
                 }
                 Reference reference = field.getAnnotation(Reference.class);
             	if (reference != null) {
+                    logger.info("reference:"+reference);
 	                Object value = refer(reference, field.getType());
 	                if (value != null) {
 	                	field.set(bean, value);
