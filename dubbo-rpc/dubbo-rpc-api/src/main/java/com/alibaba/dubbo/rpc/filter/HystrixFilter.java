@@ -25,7 +25,7 @@ public class HystrixFilter implements Filter {
         String sleepMilliseconds = invocation.getInvoker().getUrl().getParameter("sleepmilliseconds");
         String errorPercentage = invocation.getInvoker().getUrl().getParameter("errorpercentage");
         String executionTimeoutEnabled = invocation.getInvoker().getUrl().getParameter("executiontimeoutenabled");
-        String thresholdSwitch = invocation.getInvoker().getUrl().getParameter("thresholdswitch");
+        Boolean thresholdSwitch = invocation.getEnableBreaker();
 
         Map<String, String> hystrixMap = new HashMap<String, String>();
         hystrixMap.put("requestVolume", requestVolume);
@@ -33,18 +33,12 @@ public class HystrixFilter implements Filter {
         hystrixMap.put("errorPercentage", errorPercentage);
         hystrixMap.put("executionTimeoutEnabled", executionTimeoutEnabled);
 
-        log.info("[hystrixMap参数是]"+hystrixMap);
+        log.info("[hystrixMap参数是]" + hystrixMap);
 
-        if (StringUtils.isNotEmpty(thresholdSwitch)) {
-            if (thresholdSwitch.equalsIgnoreCase("true")) {
-                DubboHystrixCommand command = new DubboHystrixCommand(invoker, invocation, hystrixMap);
-                return command.execute();
-            } else {
-                return invoker.invoke(invocation);
-            }
+        if (null != thresholdSwitch && thresholdSwitch) {
+            DubboHystrixCommand command = new DubboHystrixCommand(invoker, invocation, hystrixMap);
+            return command.execute();
         }
-
-
         return invoker.invoke(invocation);
     }
 

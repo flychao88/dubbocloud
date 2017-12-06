@@ -15,6 +15,8 @@
  */
 package com.alibaba.dubbo.demo.bid;
 
+import com.alibaba.dubbo.rpc.annotation.EnableBreaker;
+
 import java.util.ArrayList;
 import java.util.List;
 

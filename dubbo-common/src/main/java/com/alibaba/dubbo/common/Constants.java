@@ -593,6 +593,10 @@ public class Constants {
 
     public static final String GENERIC_SERIALIZATION_BEAN          = "bean";
 
+
+
+    public static final String METHOD_HYSTRIX_KEY          = "thresholdswitch";
+
     /*
      * private Constants(){ }
      */

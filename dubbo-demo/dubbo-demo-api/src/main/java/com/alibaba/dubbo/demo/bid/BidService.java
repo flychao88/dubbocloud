@@ -15,9 +15,12 @@
  */
 package com.alibaba.dubbo.demo.bid;
 
+import com.alibaba.dubbo.rpc.annotation.EnableBreaker;
+
 public interface BidService {
 
-	BidResponse bid(BidRequest request);
+    @EnableBreaker
+    BidResponse bid(BidRequest request);
 
     void throwNPE() throws NullPointerException;
 }
