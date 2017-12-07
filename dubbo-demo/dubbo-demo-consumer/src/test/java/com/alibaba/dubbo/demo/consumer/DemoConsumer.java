@@ -42,7 +42,7 @@ public class DemoConsumer {
 		BidRequest bidRequest = new BidRequest();
 		bidRequest.setId("2222");
 
-		BidResponse bidResponse = bidService.bid(bidRequest);
+		BidResponse bidResponse = bidService.bid2(null,null,22,4);
 		System.out.println("===============================[consumer返回值] bidResponse:"+bidResponse);
 
 

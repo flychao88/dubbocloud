@@ -20,6 +20,9 @@ import java.io.InputStream;
 
 import com.alibaba.dubbo.common.io.Bytes;
 import com.alibaba.dubbo.common.io.StreamUtils;
+import com.alibaba.dubbo.common.json.JSON;
+import com.alibaba.dubbo.common.json.JSONObject;
+import com.alibaba.dubbo.common.json.JSONWriter;
 import com.alibaba.dubbo.common.logger.Logger;
 import com.alibaba.dubbo.common.logger.LoggerFactory;
 import com.alibaba.dubbo.common.serialize.Cleanable;
@@ -241,6 +244,7 @@ public class ExchangeCodec extends TelnetCodec {
         try {
             if (req.isEvent()) {
                 encodeEventData(channel, out, req.getData());
+                logger.info(req.getData().toString());
             } else {
                 encodeRequestData(channel, out, req.getData());
             }

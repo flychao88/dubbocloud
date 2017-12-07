@@ -5,18 +5,25 @@ import com.alibaba.dubbo.common.extension.Activate;
 import com.alibaba.dubbo.common.utils.StringUtils;
 import com.alibaba.dubbo.rpc.*;
 import org.apache.commons.lang.Validate;
+import org.apache.commons.lang.math.NumberUtils;
+import org.apache.http.util.Asserts;
+
+import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+import javax.validation.ConstraintViolation;
 import javax.validation.Valid;
 import javax.validation.Validation;
 import javax.validation.Validator;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+
 /**
  * @author juntao.zhang
  * @version V1.0
@@ -24,7 +31,7 @@ import java.util.Map;
  * @Package com.alibaba.dubbo.rpc.filter
  * @date 2017/12/6 22:08
  */
-@Activate(group = Constants.CONSUMER, order = -10000)
+@Activate(group = Constants.CONSUMER, order = -20000)
 public class ValidateFilter implements Filter {
 
     private final static Logger log = LoggerFactory.getLogger(ValidateFilter.class);
@@ -35,42 +42,28 @@ public class ValidateFilter implements Filter {
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
         try {
             Method method = invoker.getInterface().getMethod(invocation.getMethodName(), invocation.getParameterTypes());
-
-
-
-            //1、method 判断有无valid注解
-
+            Object[] arguments = invocation.getArguments();
             Annotation[][] parameterAnnotations = method.getParameterAnnotations();
             if (parameterAnnotations != null && parameterAnnotations.length != 0) {
                 for (Annotation[] parameterAnnotation : parameterAnnotations) {
-                    for (Annotation annotation : parameterAnnotation) {
-                        if (annotation instanceof Valid) {
-                            //Set<ConstraintViolation<Car>> constraintViolations = validator.validate(car);
+                    for ( int i = 0 ; i < parameterAnnotation.length ; i ++) {
+                        Annotation annotation = parameterAnnotation[i];
+                        Object argument = arguments[i];
+                        if (annotation instanceof NotNull) {
+                            Asserts.notNull(argument,((NotNull) annotation).message());
                         }
-                    }
-                }
-
-
-            }
-
-
-            //2、
-
-
-            //3、检验对象参数中属性
-            Object[] arguments1 = invocation.getArguments();
-            if (arguments1 != null){
-                for (int i = 0 ; i < arguments1.length ; i ++){
-                    Field[] declaredFields = arguments1.getClass().getDeclaredFields();
-                    if (declaredFields != null){
-                        for (Field field : declaredFields){
-                            /*Annotation annotation = field.getAnnotation();*/
-
-
-
-
-
-
+                        if (annotation instanceof NotEmpty) {
+                            Asserts.notNull(argument,((NotEmpty) annotation).message());
+                            if (argument instanceof String)
+                            Asserts.notEmpty(String.valueOf(argument),((NotEmpty) annotation).message());
+                        }
+                        if (annotation instanceof Valid) {
+                            Set<ConstraintViolation<Object>> validate = validator.validate(argument, new Class[]{});
+                            Optional<ConstraintViolation<Object>> first = validate.stream().findFirst();
+                            if (first.isPresent()){
+                                ConstraintViolation<Object> objectConstraintViolation = first.get();
+                                throw new IllegalArgumentException(String.format("field [%s] %s",objectConstraintViolation.getPropertyPath() , objectConstraintViolation.getMessage()));
+                            }
                         }
                     }
                 }
