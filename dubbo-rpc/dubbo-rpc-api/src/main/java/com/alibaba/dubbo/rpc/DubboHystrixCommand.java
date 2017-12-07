@@ -5,8 +5,9 @@ import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.HystrixCommandKey;
 import com.netflix.hystrix.HystrixCommandProperties;
 import com.netflix.hystrix.HystrixThreadPoolProperties;
-import org.apache.log4j.Logger;
-import org.apache.log4j.pattern.IntegerPatternConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import java.util.Map;
 
@@ -17,7 +18,7 @@ import java.util.Map;
  **/
 public class DubboHystrixCommand extends HystrixCommand<Result> {
 
-    private static Logger logger  = Logger.getLogger(DubboHystrixCommand.class);
+    private static Logger logger  = LoggerFactory.getLogger(DubboHystrixCommand.class);
     private static final int DEFAULT_THREADPOOL_CORE_SIZE = 30;
     private Invoker<?> invoker;
     private Invocation invocation;

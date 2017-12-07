@@ -16,7 +16,11 @@
 package com.alibaba.dubbo.demo.bid;
 
 import com.alibaba.dubbo.rpc.annotation.EnableBreaker;
+import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.constraints.Max;
+
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +44,27 @@ public class BidServiceImpl implements BidService {
 
     public void throwNPE() throws NullPointerException {
         throw new NullPointerException();
+    }
+
+    @Override
+    public BidResponse bid2(@NotEmpty String name, String addr, @NotNull Integer age, @Max(2) int num) {
+
+
+        System.err.println(String.format("name:%s\taddr:%s\tage:%s\tmun:%s",name,addr,age,num));
+
+        BidResponse response = new BidResponse();
+
+        response.setId("abc");
+
+        SeatBid seatBid = new SeatBid();
+        seatBid.setGroup("group");
+        seatBid.setSeat("seat");
+        List<SeatBid> seatBids = new ArrayList<SeatBid>(1);
+        seatBids.add(seatBid);
+
+        response.setSeatBids(seatBids);
+
+        return response;
     }
 
 }

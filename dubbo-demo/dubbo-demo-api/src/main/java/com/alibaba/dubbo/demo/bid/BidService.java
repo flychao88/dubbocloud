@@ -16,6 +16,12 @@
 package com.alibaba.dubbo.demo.bid;
 
 import com.alibaba.dubbo.rpc.annotation.EnableBreaker;
+import org.hibernate.validator.constraints.NotEmpty;
+
+
+import javax.validation.constraints.Max;
+
+import javax.validation.constraints.NotNull;
 
 public interface BidService {
 
@@ -23,4 +29,8 @@ public interface BidService {
     BidResponse bid(BidRequest request);
 
     void throwNPE() throws NullPointerException;
+
+
+
+    BidResponse bid2(@NotEmpty String name , String addr , @NotNull Integer age, @Max(2) int num);
 }

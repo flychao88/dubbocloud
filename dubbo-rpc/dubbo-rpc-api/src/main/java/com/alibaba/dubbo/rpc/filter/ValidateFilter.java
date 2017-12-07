@@ -8,7 +8,10 @@ import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.constraints.NotNull;
+
+import javax.validation.Valid;
+import javax.validation.Validation;
+import javax.validation.Validator;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -26,10 +29,13 @@ public class ValidateFilter implements Filter {
 
     private final static Logger log = LoggerFactory.getLogger(ValidateFilter.class);
 
+    Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+
     @Override
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
         try {
-            Method method = invocation.getInvoker().getInterface().getMethod(invocation.getMethodName(), invocation.getParameterTypes());
+            Method method = invoker.getInterface().getMethod(invocation.getMethodName(), invocation.getParameterTypes());
+
 
 
             //1、method 判断有无valid注解
@@ -38,9 +44,8 @@ public class ValidateFilter implements Filter {
             if (parameterAnnotations != null && parameterAnnotations.length != 0) {
                 for (Annotation[] parameterAnnotation : parameterAnnotations) {
                     for (Annotation annotation : parameterAnnotation) {
-                        if (annotation instanceof Param) {
-
-
+                        if (annotation instanceof Valid) {
+                            //Set<ConstraintViolation<Car>> constraintViolations = validator.validate(car);
                         }
                     }
                 }
